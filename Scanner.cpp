@@ -94,9 +94,12 @@ void Scanner::scanToken() {
 				// Comment eol
 				while (peek() != '\n' && !isAtEnd()) advance();
 			} else if (match('*')) {
-				while (peek() != '*' && 
-					peekNext() != '/' && 
-					!isAtEnd()) {
+				while (!isAtEnd()) {
+					if (peek() == '*') {
+						if (peekNext() == '/') {
+							break;
+						}
+					}
 					advance();
 				}
 				int i = 2;

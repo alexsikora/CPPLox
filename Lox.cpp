@@ -39,7 +39,7 @@ void Lox::runPrompt() {
 	string line;
 	while (true) {
 		std::cout << "> ";
-		std::cin >> line;
+		getline (std::cin, line);
 		auto scanner = make_shared<Scanner>(line);
 		auto tokens = scanner->scanTokens();
 

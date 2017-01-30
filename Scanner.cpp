@@ -4,6 +4,7 @@
 
 #include "Scanner.hpp"
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 using namespace lox;
@@ -114,7 +115,7 @@ void Scanner::scanToken() {
 			break;
 
 		case '"':
-			//string();
+			string();
 			break;
 
 		// Meaningless characters
@@ -124,13 +125,13 @@ void Scanner::scanToken() {
 			break;
 
 		default: {
-			/*if (isDigit(c)) {
+			if (isDigit(c)) {
 				number();
 			} else if (isAlpha(c)) {
 				identifier();
-			} else {*/
+			} else {
 				error(line, "Unexpected character.");
-			//}
+			}
 			break;
 		}
 
@@ -143,39 +144,101 @@ void Scanner::error(int line, std::string message) {
 }
 
 void Scanner::identifier() {
+	while (isAlphaNumeric(peek())) {
+		advance();
+	}
 
+	// Check for reserved identifier
+	auto text = source.substr(start, current - start);
+
+	auto keyword = keywords.find(text);
+	if (keyword == keywords.end()) {
+		// No token found
+		addToken(TokenType::IDENTIFIER);
+	} else {
+		addToken(keyword->second);
+	}
 }
 
 bool Scanner::isAlpha(char c) {
-	return false;
+	return (c >= 'a' && c <= 'z') ||
+			(c >= 'A' && c <= 'Z') ||
+			c == '_';
 }
 
 bool Scanner::isAlphaNumeric(char c) {
-	return false;
+	return isAlpha(c) || isDigit(c);
 }
 
 void Scanner::string() {
+	while (peek() != '"' && !isAtEnd()) {
+		if (peek() == '\n') {
+			line++;
+		}
+		advance();
+	}
 
+	if (isAtEnd()) {
+		error(line, "Unterminated string.");
+		return;
+	}
+
+	advance();
+
+	auto value = source.substr(start + 1, current - 2 - start);
+	addToken(TokenType::STRING, value);
 }
 
 void Scanner::number() {
+	while (isDigit(peek())) {
+		advance();
+	}
 
+	if (peek() == '.' && isDigit(peekNext())) {
+		advance();
+		while (isDigit(peek())) {
+			advance();
+		}
+	}
+
+	auto sub = source.substr(start, current - start);
+	std::istringstream i(sub);
+	double value;
+	if (!(i >> value)) {
+		error(line, "Bad number");
+	}
+	addToken(TokenType::NUMBER, value);
 }
 
 bool Scanner::match(char expected) {
-	return false;
+	if (isAtEnd()) {
+		return false;
+	}
+
+	if (source.at(current) != expected) {
+		return false;
+	}
+
+	current++;
+	return true;
 }
 
 char Scanner::peek() {
-	return 'a';
+	if (current >= source.length()) {
+		return '\0';
+	}
+	return source.at(current);
 }
 
 char Scanner::peekNext() {
-	return 'a';
+	if (current + 1 >= source.length()) {
+		return '\0';
+	}
+	return source.at(current + 1);
 }
 
 bool Scanner::isDigit(char c) {
-	return false;
+	return c >= '0' && c <= '9';
 }
 
 bool Scanner::isAtEnd() {

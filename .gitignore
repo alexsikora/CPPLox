@@ -1,3 +1,6 @@
 *.dSYM
 *.o
 cpplox
+
+#My Test Script
+a.lox 

@@ -21,6 +21,5 @@ namespace lox {
 		void run(std::string source);
 
 	private:
-		bool hadError;
 	};
 }

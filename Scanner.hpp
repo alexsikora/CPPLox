@@ -13,13 +13,19 @@ namespace lox {
 		Scanner(std::string source_);
 		std::vector<Token> scanTokens();
 
+		bool hadError = false;
+
 	protected:
 		std::string source;
 		int start;
 		int current;
 		int line;
 
+		std::vector<Token> tokens;
+
 		std::unordered_map<std::string, TokenType> keywords;
+
+		void error(int line, std::string message);
 	private:
 		void scanToken();
 		void identifier();

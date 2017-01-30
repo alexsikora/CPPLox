@@ -24,7 +24,12 @@ void Lox::runFile(char *fileName) {
 		            std::istreambuf_iterator<char>());
 	
 		auto scanner = make_shared<Scanner>(str);
-		scanner->scanTokens();
+		auto tokens = scanner->scanTokens();
+
+		for (auto token : tokens) {
+			cout << token.toString() << endl;
+		}
+
 	} else {
 		cout << "Unable to open file";
 	}
@@ -36,9 +41,12 @@ void Lox::runPrompt() {
 		std::cout << "> ";
 		std::cin >> line;
 		auto scanner = make_shared<Scanner>(line);
-		scanner->scanTokens();
+		auto tokens = scanner->scanTokens();
+
+		for (auto token : tokens) {
+			cout << token.toString() << endl;
+		}
 		
-		hadError = false;
 	} 
 }
 

@@ -3,7 +3,7 @@
 // Implementation of Lox Compiler in C++
 
 #include "Lox.hpp"
-
+#include "Scanner.hpp"
 #include <iostream>
 #include <fstream>
 #include <streambuf>
@@ -23,7 +23,8 @@ void Lox::runFile(char *fileName) {
 		str.assign((std::istreambuf_iterator<char>(scriptFile)),
 		            std::istreambuf_iterator<char>());
 	
-		run(str);
+		auto scanner = make_shared<Scanner>(str);
+		scanner->scanTokens();
 	} else {
 		cout << "Unable to open file";
 	}
@@ -34,7 +35,8 @@ void Lox::runPrompt() {
 	while (true) {
 		std::cout << "> ";
 		std::cin >> line;
-		run(line);
+		auto scanner = make_shared<Scanner>(line);
+		scanner->scanTokens();
 		
 		hadError = false;
 	} 
